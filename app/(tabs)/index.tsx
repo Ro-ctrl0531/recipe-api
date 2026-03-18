@@ -1,78 +1,67 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { router } from 'expo-router';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function HomeScreen() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const buttonBackground = useThemeColor({ light: '#0a7ea4', dark: '#0a7ea4' }, 'tint');
+  const buttonText = useThemeColor({ light: '#ffffff', dark: '#ffffff' }, 'text');
+  const headerIconColor = colorScheme === 'dark' ? '#FDE68A' : '#7C2D12';
+
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#FDE68A', dark: '#7C2D12' }}
       headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
+        <ThemedView style={styles.headerIconWrap} lightColor="transparent" darkColor="transparent">
+          <IconSymbol
+            size={180}
+            name="fork.knife"
+            color={headerIconColor}
+            style={styles.headerIcon}
+          />
+        </ThemedView>
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
+        <ThemedText type="title">Recipe Quest</ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
+          Search meals from a public API (TheMealDB), then open a recipe to see ingredients and
+          instructions. Includes search, pull-to-refresh, and error handling.
         </ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/recipes')}
+          style={[styles.primaryButton, { backgroundColor: buttonBackground }]}>
+          <ThemedText style={[styles.primaryButtonText, { color: buttonText }]}>
+            Start searching
+          </ThemedText>
+        </Pressable>
+      </ThemedView>
+
+      <ThemedView style={styles.stepContainer}>
+        <Image
+          source={require('@/assets/images/react-logo.png')}
+          style={styles.smallLogo}
+          contentFit="contain"
+        />
+        <ThemedText type="defaultSemiBold">Built with React Native + Expo</ThemedText>
+      </ThemedView>
+
+      <ThemedView style={styles.stepContainer}>
+        <Pressable accessibilityRole="button" onPress={() => router.push('/modal')}>
+          <ThemedText type="link">About this app</ThemedText>
+        </Pressable>
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -80,19 +69,33 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    alignItems: 'flex-start',
   },
   stepContainer: {
     gap: 8,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  headerIconWrap: {
+    height: 250,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  headerIcon: {
+    opacity: 0.95,
+  },
+  primaryButton: {
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  primaryButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  smallLogo: {
+    width: 80,
+    height: 80,
+    opacity: 0.9,
   },
 });
